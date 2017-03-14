@@ -118,8 +118,9 @@ function keyboardHandler(event) {
         case "r":
             mat4.multiply(pictureCF, pictureCF, rotYpos);    // pictureCF = pictureCF * Trans
             break;
+
     }
-    textOut.innerHTML = "picture origin (" + pictureCF[12].toFixed(1) + ", "
+    textOut.innerHTML = "Ring origin (" + pictureCF[12].toFixed(1) + ", "
         + pictureCF[13].toFixed(1) + ", "
         + pictureCF[14].toFixed(1) + ")";
 }
@@ -128,7 +129,6 @@ function render() {
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     draw3D();
     drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
-    // coneSpinAngle += 1;  /* add 1 degree */
     coneSpinAngle += 1;
     requestAnimationFrame(render);
 }
@@ -146,12 +146,17 @@ function drawScene() {
     //         knight.draw(posAttr, colAttr, modelUnif, tmpMat);
     // }
     if (typeof picture !== 'undefined') {
-            //mat4.fromTranslation(tmpMat, vec3.fromValues(-.5, .5, 0));
-            //mat4.multiply(tmpMat, ArmorCF, tmpMat);   // tmp = ArmorCF * tmpMat
-            let pictureRot = mat4.fromZRotation(mat4.create(), coneSpinAngle * Math.PI/180.0);
-            let tmp = mat4.create();
-            mat4.multiply (tmp, pictureCF, pictureRot);   // tmp = coneCF * coneRot
-            picture.draw(posAttr, colAttr, modelUnif, tmpMat);
+        /*mat4.fromTranslation(tmpMat, vec3.fromValues(-.5, .5, 0));
+        mat4.multiply(tmpMat, pictureCF, tmpMat);   // tmp = horseCF * tmpMat
+        obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+        picture.draw(posAttr, colAttr, modelUnif, tmpMat);*/
+
+        mat4.fromTranslation(tmpMat, vec3.fromValues(-.5, .5, 0));
+        mat4.multiply(tmpMat, pictureCF, tmpMat);   // tmp = pictureCF * tmpMat
+        let pictureRot = mat4.fromZRotation(mat4.create(), coneSpinAngle * Math.PI/180.0);
+        let tmp = mat4.create();
+        mat4.multiply (tmp, pictureCF, pictureRot);   // tmp = coneCF * coneRot
+        picture.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
 
