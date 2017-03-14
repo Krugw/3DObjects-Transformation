@@ -3,40 +3,88 @@
  */
 class Horse {
     constructor (gl) {
-        this.barrel = new Cylinder(gl, .06, .06, .2, 20);
+        this.barrel = new Cylinder(gl, .06, .065, .2, 20);
         this.rear = new UniSphere(gl, .07, 4);
+        this.tail1 = new Cylinder(gl, .007, .008, .016, 20);
+        this.tail2 = new Cylinder(gl, .009, .008, .016, 20);
+        this.tail3 = new Cylinder(gl, .013, .009, .016, 20);
+        this.tail4 = new Cylinder(gl, .013, .011, .02, 20);
+        this.tail5 = new Cylinder(gl, .019, .013, .17, 20);
         this.chest = new UniSphere(gl, .07, 4);
         this.neck = new Cylinder(gl, .04, .06, .18, 20);
+        let col1 = vec3.fromValues(0xFF/255, 0xFF/255, 0xFF/255);
+        let col2 = vec3.fromValues(0xE1/255, 0xC8/255, 0xA2/255);
+        this.mane = new Cylinder(gl, .01, .01, .2, 20, col1, col2);
+        this.forlock = new UniSphere(gl, .01, 4);
+        //this.maneBraid = new UniSphere(gl, .008, 4, 30, 10);
         this.cheek = new UniSphere(gl, .05, 4);
         this.bridge = new Cylinder(gl, .022, .040, .08, 20);
         this.muzzle = new UniSphere(gl, .022, 4);
+        this.nostril = new UniSphere(gl, .008, 4, 30, 10);
         this.eye = new UniSphere(gl, .008, 4);
+        this.ear = new Cone(gl, .016, .05, 4, 4);
         this.sholder = new UniSphere(gl, .059, 4);
-        this.hip = new UniSphere(gl, .05, 4);
+        this.hip = new UniSphere(gl, .065, 4);
+        this.thigh = new Cylinder(gl, .055, .021, .07, 20);
         this.forearm = new Cylinder(gl, .03, .01, .15, 20);
-        this.stifle = new Cylinder(gl, .04, .02, .1, 20);
-        this.gaskin = new Cylinder(gl, .04, .01, .1, 20);
+        this.gaskin = new Cylinder(gl, .019, .01, .11, 20);
         this.knee = new UniSphere(gl, .012, 4);
         this.hock = new UniSphere(gl, .012, 4);
-        this.cannon = new Cylinder(gl, .01, .01, .15, 20);
-        //this.fetlock = new UniSphere(gl, .011, 4);
-        this.fetlock = new Cube(gl, .011, 4);
-        this.pastern = new Cylinder(gl, .008, .008, .02, 20);
+        this.cannon = new Cylinder(gl, .01, .01, .07, 20);
+        this.fetlock = new UniSphere(gl, .01, 4);
+        this.pastern = new Cylinder(gl, .008, .008, .03, 20);
         this.hoof = new Cylinder(gl, .008, .014, .016, 20);
 
         this.barrelTransform = mat4.create();
-        let moveUp = vec3.fromValues (0, 0, .292);
+        let moveUp = vec3.fromValues (0, 0, .291);
         mat4.translate (this.barrelTransform, this.barrelTransform, moveUp);
-        mat4.rotateX(this.barrelTransform, this.barrelTransform, Math.PI/2);
+        mat4.rotateX(this.barrelTransform, this.barrelTransform, Math.PI/2.1);
 
         this.rearTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .291);
         mat4.translate (this.rearTransform, this.rearTransform, moveUp);
         let moveLeft = vec3.fromValues (0, -.1, 0);
         mat4.translate (this.rearTransform, this.rearTransform, moveLeft);
 
+        this.tail1Transform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .34);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        mat4.translate (this.tail1Transform, this.tail1Transform, moveUp);
+        mat4.translate (this.tail1Transform, this.tail1Transform, moveLeft);
+        mat4.rotateX(this.tail1Transform, this.tail1Transform, Math.PI/1.6);
+
+        this.tail2Transform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .332);
+        moveLeft = vec3.fromValues (0, -.157, 0);
+        mat4.translate (this.tail2Transform, this.tail2Transform, moveUp);
+        mat4.translate (this.tail2Transform, this.tail2Transform, moveLeft);
+        mat4.rotateX(this.tail2Transform, this.tail2Transform, Math.PI/1.4);
+
+        this.tail3Transform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .32);
+        moveLeft = vec3.fromValues (0, -.164, 0);
+        mat4.translate (this.tail3Transform, this.tail3Transform, moveUp);
+        mat4.translate (this.tail3Transform, this.tail3Transform, moveLeft);
+        mat4.rotateX(this.tail3Transform, this.tail3Transform, Math.PI/1.1);
+
+        this.tail4Transform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .31);
+        moveLeft = vec3.fromValues (0, -.169, 0);
+        mat4.translate (this.tail4Transform, this.tail4Transform, moveUp);
+        mat4.translate (this.tail4Transform, this.tail4Transform, moveLeft);
+        mat4.rotateX(this.tail4Transform, this.tail4Transform, Math.PI/1.09);
+
+        this.tail5Transform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .22);
+        moveLeft = vec3.fromValues (0, -.184, 0);
+        mat4.translate (this.tail5Transform, this.tail5Transform, moveUp);
+        mat4.translate (this.tail5Transform, this.tail5Transform, moveLeft);
+        mat4.rotateX(this.tail5Transform, this.tail5Transform, Math.PI/1.05);
+
         this.chestTransform = mat4.create();
-        mat4.translate (this.chestTransform, this.chestTransform, moveUp);
+        moveUp = vec3.fromValues (0, 0, .291);
         let moveRight = vec3.fromValues (0, .1, 0);
+        mat4.translate (this.chestTransform, this.chestTransform, moveUp);
         mat4.translate (this.chestTransform, this.chestTransform, moveRight);
 
         this.neckTransform = mat4.create();
@@ -46,8 +94,22 @@ class Horse {
         mat4.translate (this.neckTransform, this.neckTransform, moveRight);
         mat4.rotateX(this.neckTransform, this.neckTransform, -Math.PI/7);
 
+        this.maneTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .45);
+        moveRight = vec3.fromValues (0, .139, 0);
+        mat4.translate (this.maneTransform, this.maneTransform, moveUp);
+        mat4.translate (this.maneTransform, this.maneTransform, moveRight);
+        mat4.rotateX(this.maneTransform, this.maneTransform, -Math.PI/6);
+
+        this.forlockTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .54);
+        moveRight = vec3.fromValues (0, .19, 0);
+        mat4.translate (this.forlockTransform, this.forlockTransform, moveUp);
+        mat4.translate (this.forlockTransform, this.forlockTransform, moveRight);
+        mat4.rotateX(this.forlockTransform, this.forlockTransform, -Math.PI/6);
+
         this.cheekTransform = mat4.create();
-        moveUp = vec3.fromValues (0, 0, .492);
+        moveUp = vec3.fromValues (0, 0, .49);
         moveRight = vec3.fromValues (0, .21, 0);
         mat4.translate (this.cheekTransform, this.cheekTransform, moveUp);
         mat4.translate (this.cheekTransform, this.cheekTransform, moveRight);
@@ -65,10 +127,26 @@ class Horse {
         mat4.translate (this.muzzleTransform, this.muzzleTransform, moveUp);
         mat4.translate (this.muzzleTransform, this.muzzleTransform, moveRight);
 
+        this.nostrilRTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .454);
+        moveRight = vec3.fromValues (0, .326, 0);
+        let moveForward = vec3.fromValues (.009, 0, 0);
+        mat4.translate (this.nostrilRTransform, this.nostrilRTransform, moveUp);
+        mat4.translate (this.nostrilRTransform, this.nostrilRTransform, moveRight);
+        mat4.translate (this.nostrilRTransform, this.nostrilRTransform, moveForward);
+
+        this.nostrilLTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .454);
+        moveRight = vec3.fromValues (0, .326, 0);
+        let moveBackward = vec3.fromValues (-.009, 0, 0);
+        mat4.translate (this.nostrilLTransform, this.nostrilLTransform, moveUp);
+        mat4.translate (this.nostrilLTransform, this.nostrilLTransform, moveRight);
+        mat4.translate (this.nostrilLTransform, this.nostrilLTransform, moveBackward);
+
         this.eyeRTransform = mat4.create();
         moveUp = vec3.fromValues (0, 0, .512);
         moveRight = vec3.fromValues (0, .24, 0);
-        let moveForward = vec3.fromValues (.028, 0, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
         mat4.translate (this.eyeRTransform, this.eyeRTransform, moveUp);
         mat4.translate (this.eyeRTransform, this.eyeRTransform, moveRight);
         mat4.translate (this.eyeRTransform, this.eyeRTransform, moveForward);
@@ -76,16 +154,34 @@ class Horse {
         this.eyeLTransform = mat4.create();
         moveUp = vec3.fromValues (0, 0, .512);
         moveRight = vec3.fromValues (0, .24, 0);
-        let moveBackward = vec3.fromValues (-.028, 0, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
         mat4.translate (this.eyeLTransform, this.eyeLTransform, moveUp);
         mat4.translate (this.eyeLTransform, this.eyeLTransform, moveRight);
         mat4.translate (this.eyeLTransform, this.eyeLTransform, moveBackward);
+
+        this.earRTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .52);
+        moveRight = vec3.fromValues (0, .2, 0);
+        moveForward = vec3.fromValues (.026, 0, 0);
+        mat4.translate (this.earRTransform, this.earRTransform, moveUp);
+        mat4.translate (this.earRTransform, this.earRTransform, moveRight);
+        mat4.translate (this.earRTransform, this.earRTransform, moveForward);
+        mat4.rotateX(this.earRTransform, this.earRTransform, -Math.PI/8);
+
+        this.earLTransform = mat4.create();
+        moveUp = vec3.fromValues (0, 0, .52);
+        moveRight = vec3.fromValues (0, .2, 0);
+        moveBackward = vec3.fromValues (-.026, 0, 0);
+        mat4.translate (this.earLTransform, this.earLTransform, moveUp);
+        mat4.translate (this.earLTransform, this.earLTransform, moveRight);
+        mat4.translate (this.earLTransform, this.earLTransform, moveBackward);
+        mat4.rotateX(this.earLTransform, this.earLTransform, -Math.PI/8);
 
         /*Front Right Leg*/
         this.sholderFLTransform = mat4.create();
         moveUp = vec3.fromValues(0, 0, .284);
         moveRight = vec3.fromValues (0, .11, 0);
-        moveForward = vec3.fromValues (.022, 0, 0);
+        moveForward = vec3.fromValues (.02, 0, 0);
         mat4.translate (this.sholderFLTransform, this.sholderFLTransform, moveUp);
         mat4.translate (this.sholderFLTransform, this.sholderFLTransform, moveRight);
         mat4.translate (this.sholderFLTransform, this.sholderFLTransform, moveForward);
@@ -107,7 +203,7 @@ class Horse {
         mat4.translate (this.kneeFRTransform, this.kneeFRTransform, moveForward);
 
         this.cannonFRTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .112);
+        moveUp = vec3.fromValues(0, 0, .072);
         moveRight = vec3.fromValues (0, .11, 0);
         moveForward = vec3.fromValues (.05, 0, 0);
         mat4.translate (this.cannonFRTransform, this.cannonFRTransform, moveUp);
@@ -141,7 +237,7 @@ class Horse {
         this.sholderRTransform = mat4.create();
         moveUp = vec3.fromValues(0, 0, .284);
         moveRight = vec3.fromValues (0, .11, 0);
-        moveBackward = vec3.fromValues (-.022, 0, 0);
+        moveBackward = vec3.fromValues (-.02, 0, 0);
         mat4.translate (this.sholderRTransform, this.sholderRTransform, moveUp);
         mat4.translate (this.sholderRTransform, this.sholderRTransform, moveRight);
         mat4.translate (this.sholderRTransform, this.sholderRTransform, moveBackward);
@@ -163,7 +259,7 @@ class Horse {
         mat4.translate (this.kneeFLTransform, this.kneeFLTransform, moveBackward);
 
         this.cannonFLTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .112);
+        moveUp = vec3.fromValues(0, 0, .072);
         moveRight = vec3.fromValues (0, .11, 0);
         moveBackward = vec3.fromValues (-.05, 0, 0);
         mat4.translate (this.cannonFLTransform, this.cannonFLTransform, moveUp);
@@ -195,37 +291,136 @@ class Horse {
 
         /*Back Right Legs*/
         this.hipRTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .282);
+        moveUp = vec3.fromValues(0, 0, .29);
         moveLeft = vec3.fromValues (0, -.1, 0);
-        moveForward = vec3.fromValues (.026, 0, 0);
+        moveForward = vec3.fromValues (.017, 0, 0);
         mat4.translate (this.hipRTransform, this.hipRTransform, moveUp);
         mat4.translate (this.hipRTransform, this.hipRTransform, moveLeft);
         mat4.translate (this.hipRTransform, this.hipRTransform, moveForward);
 
-        this.stifleRTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .2);
+        this.thighRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .23);
         moveLeft = vec3.fromValues (0, -.1, 0);
-        moveForward = vec3.fromValues (.026, 0, 0);
-        mat4.translate (this.stifleRTransform, this.stifleRTransform, moveUp);
-        mat4.translate (this.stifleRTransform, this.stifleRTransform, moveLeft);
-        mat4.translate (this.stifleRTransform, this.stifleRTransform, moveForward);
+        moveForward = vec3.fromValues (.027, 0, 0);
+        mat4.translate (this.thighRTransform, this.thighRTransform, moveUp);
+        mat4.translate (this.thighRTransform, this.thighRTransform, moveLeft);
+        mat4.translate (this.thighRTransform, this.thighRTransform, moveForward);
+        //mat4.rotateX(this.thighRTransform, this.thighRTransform, -Math.PI/6);
+
+        this.gaskinRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .16);
+        moveLeft = vec3.fromValues (0, -.12, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.gaskinRTransform, this.gaskinRTransform, moveUp);
+        mat4.translate (this.gaskinRTransform, this.gaskinRTransform, moveLeft);
+        mat4.translate (this.gaskinRTransform, this.gaskinRTransform, moveForward);
+        mat4.rotateX(this.gaskinRTransform, this.gaskinRTransform, -Math.PI/6);
+
+        this.hockRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .112);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.hockRTransform, this.hockRTransform, moveUp);
+        mat4.translate (this.hockRTransform, this.hockRTransform, moveLeft);
+        mat4.translate (this.hockRTransform, this.hockRTransform, moveForward);
+
+        this.cannonRRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .072);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.cannonRRTransform, this.cannonRRTransform, moveUp);
+        mat4.translate (this.cannonRRTransform, this.cannonRRTransform, moveLeft);
+        mat4.translate (this.cannonRRTransform, this.cannonRRTransform, moveForward);
+
+        this.fetlockRRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .032);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.fetlockRRTransform, this.fetlockRRTransform, moveUp);
+        mat4.translate (this.fetlockRRTransform, this.fetlockRRTransform, moveLeft);
+        mat4.translate (this.fetlockRRTransform, this.fetlockRRTransform, moveForward);
+
+        this.pasternRRTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .0175);
+        moveLeft = vec3.fromValues (0, -.135, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.pasternRRTransform, this.pasternRRTransform, moveUp);
+        mat4.translate (this.pasternRRTransform, this.pasternRRTransform, moveLeft);
+        mat4.translate (this.pasternRRTransform, this.pasternRRTransform, moveForward);
+        mat4.rotateX(this.pasternRRTransform, this.pasternRRTransform, -Math.PI/1.2);
+
+        this.hoofRRTransform = mat4.create();
+        moveLeft = vec3.fromValues (0, -.125, 0);
+        moveForward = vec3.fromValues (.028, 0, 0);
+        mat4.translate (this.hoofRRTransform, this.hoofRRTransform, moveLeft);
+        mat4.translate (this.hoofRRTransform, this.hoofRRTransform, moveForward);
 
         /*Back Left Leg*/
         this.hipLTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .282);
+        moveUp = vec3.fromValues(0, 0, .29);
         moveLeft = vec3.fromValues (0, -.1, 0);
-        moveBackward = vec3.fromValues (-.026, 0, 0);
+        moveBackward = vec3.fromValues (-.017, 0, 0);
         mat4.translate (this.hipLTransform, this.hipLTransform, moveUp);
         mat4.translate (this.hipLTransform, this.hipLTransform, moveLeft);
         mat4.translate (this.hipLTransform, this.hipLTransform, moveBackward);
 
-        this.stifleLTransform = mat4.create();
-        moveUp = vec3.fromValues(0, 0, .2);
+        this.thighLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .22);
         moveLeft = vec3.fromValues (0, -.1, 0);
-        moveBackward = vec3.fromValues (-.026, 0, 0);
-        mat4.translate (this.stifleLTransform, this.stifleLTransform, moveUp);
-        mat4.translate (this.stifleLTransform, this.stifleLTransform, moveLeft);
-        mat4.translate (this.stifleLTransform, this.stifleLTransform, moveBackward);
+        moveBackward = vec3.fromValues (-.027, 0, 0);
+        mat4.translate (this.thighLTransform, this.thighLTransform, moveUp);
+        mat4.translate (this.thighLTransform, this.thighLTransform, moveLeft);
+        mat4.translate (this.thighLTransform, this.thighLTransform, moveBackward);
+        //mat4.rotateX(this.thighLTransform, this.thighLTransform, -Math.PI/6);
+
+        this.gaskinLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .16);
+        moveLeft = vec3.fromValues (0, -.12, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.gaskinLTransform, this.gaskinLTransform, moveUp);
+        mat4.translate (this.gaskinLTransform, this.gaskinLTransform, moveLeft);
+        mat4.translate (this.gaskinLTransform, this.gaskinLTransform, moveBackward);
+        mat4.rotateX(this.gaskinLTransform, this.gaskinLTransform, -Math.PI/6);
+
+        this.hockLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .112);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.hockLTransform, this.hockLTransform, moveUp);
+        mat4.translate (this.hockLTransform, this.hockLTransform, moveLeft);
+        mat4.translate (this.hockLTransform, this.hockLTransform, moveBackward);
+        mat4.rotateX(this.hockLTransform, this.hockLTransform, -Math.PI/6);
+
+        this.cannonRLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .072);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.cannonRLTransform, this.cannonRLTransform, moveUp);
+        mat4.translate (this.cannonRLTransform, this.cannonRLTransform, moveLeft);
+        mat4.translate (this.cannonRLTransform, this.cannonRLTransform, moveBackward);
+
+        this.fetlockRLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .032);
+        moveLeft = vec3.fromValues (0, -.145, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.fetlockRLTransform, this.fetlockRLTransform, moveUp);
+        mat4.translate (this.fetlockRLTransform, this.fetlockRLTransform, moveLeft);
+        mat4.translate (this.fetlockRLTransform, this.fetlockRLTransform, moveBackward);
+
+        this.pasternRLTransform = mat4.create();
+        moveUp = vec3.fromValues(0, 0, .018);
+        moveLeft = vec3.fromValues (0, -.135, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.pasternRLTransform, this.pasternRLTransform, moveUp);
+        mat4.translate (this.pasternRLTransform, this.pasternRLTransform, moveLeft);
+        mat4.translate (this.pasternRLTransform, this.pasternRLTransform, moveBackward);
+        mat4.rotateX(this.pasternRLTransform, this.pasternRLTransform, -Math.PI/1.2);
+
+        this.hoofRLTransform = mat4.create();
+        moveLeft = vec3.fromValues (0, -.125, 0);
+        moveBackward = vec3.fromValues (-.028, 0, 0);
+        mat4.translate (this.hoofRLTransform, this.hoofRLTransform, moveLeft);
+        mat4.translate (this.hoofRLTransform, this.hoofRLTransform, moveBackward);
 
         this.tmp = mat4.create();
     }
@@ -237,11 +432,32 @@ class Horse {
         mat4.mul (this.tmp, coordFrame, this.rearTransform);
         this.rear.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
+        mat4.mul (this.tmp, coordFrame, this.tail1Transform);
+        this.tail1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.tail2Transform);
+        this.tail2.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.tail3Transform);
+        this.tail3.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.tail4Transform);
+        this.tail4.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.tail5Transform);
+        this.tail5.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
         mat4.mul (this.tmp, coordFrame, this.chestTransform);
         this.chest.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         mat4.mul (this.tmp, coordFrame, this.neckTransform);
         this.neck.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.maneTransform);
+        this.mane.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.forlockTransform);
+        this.forlock.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         mat4.mul (this.tmp, coordFrame, this.cheekTransform);
         this.cheek.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
@@ -252,11 +468,23 @@ class Horse {
         mat4.mul (this.tmp, coordFrame, this.muzzleTransform);
         this.muzzle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
+        mat4.mul (this.tmp, coordFrame, this.nostrilRTransform);
+        this.nostril.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.nostrilLTransform);
+        this.nostril.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
         mat4.mul (this.tmp, coordFrame, this.eyeRTransform);
         this.eye.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         mat4.mul (this.tmp, coordFrame, this.eyeLTransform);
         this.eye.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.earRTransform);
+        this.ear.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.earLTransform);
+        this.ear.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         /*Front Right Leg*/
         mat4.mul (this.tmp, coordFrame, this.sholderRTransform);
@@ -305,14 +533,51 @@ class Horse {
         /*Back Right Leg*/
         mat4.mul (this.tmp, coordFrame, this.hipRTransform);
         this.hip.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
-        mat4.mul (this.tmp, coordFrame, this.stifleRTransform);
-        this.stifle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.thighRTransform);
+        this.thigh.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.gaskinRTransform);
+        this.gaskin.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.hockRTransform);
+        this.hock.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.cannonRRTransform);
+        this.cannon.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.fetlockRRTransform);
+        this.fetlock.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.pasternRRTransform);
+        this.pastern.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.hoofRRTransform);
+        this.hoof.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         /*Back Left Leg*/
         mat4.mul (this.tmp, coordFrame, this.hipLTransform);
         this.hip.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.stifleLTransform);
-        this.stifle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, coordFrame, this.thighLTransform);
+        this.thigh.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.gaskinLTransform);
+        this.gaskin.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.hockLTransform);
+        this.hock.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.cannonRLTransform);
+        this.cannon.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.fetlockRLTransform);
+        this.fetlock.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.pasternRLTransform);
+        this.pastern.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.hoofRLTransform);
+        this.hoof.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }
