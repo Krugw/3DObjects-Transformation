@@ -3,37 +3,39 @@
  */
 class Horse {
     constructor (gl) {
-        this.barrel = new Cylinder(gl, .06, .065, .2, 20);
+        let lightBrown = vec3.fromValues(0xFF/255, 0xFF/255, 0xFF/255);
+        let redBrown = vec3.fromValues(0x43/255, 0x1F/255, 0x0B/255);
+        let darkBrown = vec3.fromValues(0x29/255, 0x13/255, 0x05/255);
+        let gray = vec3.fromValues(0x29/255, 0x13/255, 0x05/255);
+        this.barrel = new Cylinder(gl, .06, .065, .2, 20, redBrown, darkBrown);
         this.rear = new UniSphere(gl, .07, 4);
-        this.tail1 = new Cylinder(gl, .007, .008, .016, 20);
-        this.tail2 = new Cylinder(gl, .009, .008, .016, 20);
-        this.tail3 = new Cylinder(gl, .013, .009, .016, 20);
-        this.tail4 = new Cylinder(gl, .013, .011, .02, 20);
-        this.tail5 = new Cylinder(gl, .019, .013, .17, 20);
+        this.tail1 = new Cylinder(gl, .007, .008, .016, 20, redBrown, darkBrown);
+        this.tail2 = new Cylinder(gl, .009, .008, .016, 20, redBrown, darkBrown);
+        this.tail3 = new Cylinder(gl, .013, .009, .016, 20, redBrown, darkBrown);
+        this.tail4 = new Cylinder(gl, .013, .011, .02, 20, redBrown, darkBrown);
+        this.tail5 = new Cylinder(gl, .019, .013, .17, 20, redBrown, darkBrown);
         this.chest = new UniSphere(gl, .07, 4);
-        this.neck = new Cylinder(gl, .04, .06, .18, 20);
-        let col1 = vec3.fromValues(0xFF/255, 0xFF/255, 0xFF/255);
-        let col2 = vec3.fromValues(0xE1/255, 0xC8/255, 0xA2/255);
-        this.mane = new Cylinder(gl, .01, .01, .2, 20, col1, col2);
+        this.neck = new Cylinder(gl, .04, .06, .18, 20, redBrown, darkBrown);
+        this.mane = new Cylinder(gl, .01, .01, .2, 20, redBrown, darkBrown);
         this.forlock = new UniSphere(gl, .01, 4);
         //this.maneBraid = new UniSphere(gl, .008, 4, 30, 10);
         this.cheek = new UniSphere(gl, .05, 4);
-        this.bridge = new Cylinder(gl, .022, .040, .08, 20);
+        this.bridge = new Cylinder(gl, .022, .040, .08, 20, redBrown, darkBrown);
         this.muzzle = new UniSphere(gl, .022, 4);
         this.nostril = new UniSphere(gl, .008, 4, 30, 10);
         this.eye = new UniSphere(gl, .008, 4);
         this.ear = new Cone(gl, .016, .05, 4, 4);
         this.sholder = new UniSphere(gl, .059, 4);
         this.hip = new UniSphere(gl, .065, 4);
-        this.thigh = new Cylinder(gl, .055, .021, .07, 20);
-        this.forearm = new Cylinder(gl, .03, .01, .15, 20);
-        this.gaskin = new Cylinder(gl, .019, .01, .11, 20);
+        this.thigh = new Cylinder(gl, .055, .021, .07, 20, redBrown, darkBrown);
+        this.forearm = new Cylinder(gl, .03, .01, .15, 20, redBrown, darkBrown);
+        this.gaskin = new Cylinder(gl, .019, .01, .11, 20, redBrown, darkBrown);
         this.knee = new UniSphere(gl, .012, 4);
         this.hock = new UniSphere(gl, .012, 4);
-        this.cannon = new Cylinder(gl, .01, .01, .07, 20);
+        this.cannon = new Cylinder(gl, .01, .01, .07, 20, redBrown, darkBrown);
         this.fetlock = new UniSphere(gl, .01, 4);
-        this.pastern = new Cylinder(gl, .008, .008, .03, 20);
-        this.hoof = new Cylinder(gl, .008, .014, .016, 20);
+        this.pastern = new Cylinder(gl, .008, .008, .03, 20, redBrown, darkBrown);
+        this.hoof = new Cylinder(gl, .008, .014, .016, 20, redBrown, darkBrown);
 
         this.barrelTransform = mat4.create();
         let moveUp = vec3.fromValues (0, 0, .291);
