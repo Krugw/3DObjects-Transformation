@@ -1,23 +1,22 @@
 /**
  * Created by emilypeterson on 3/7/17.
  */
-
-var gl;
-var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, horseCF;
-var axisBuff, tmpMat;
-var globalAxes;
+let gl;
+let glCanvas, textOut;
+let orthoProjMat, persProjMat, viewMat, topViewMat, horseCF;
+let axisBuff, tmpMat;
+let globalAxes;
 
 /* Vertex shader attribute variables */
-var posAttr, colAttr;
+let posAttr, colAttr;
 
 /* Shader uniform variables */
-var projUnif, viewUnif, modelUnif;
+let projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
-var coneSpinAngle;
-var obj;
-var shaderProg;
+let coneSpinAngle;
+let obj;
+let shaderProg;
 
 function main() {
     glCanvas = document.getElementById("gl-canvas");
@@ -88,12 +87,12 @@ function resizeHandler() {
 }
 
 function keyboardHandler(event) {
-    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .5, 0, 0));
-    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.5, 0, 0));
-    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, .5, 0));
-    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.5, 0));
-    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .5));
-    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.5));
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .2, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.2, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, .2, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.2, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .2));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.2));
     const rotZpos = mat4.rotateZ(mat4.create(), mat4.create(), (Math.PI)/15);
     const rotYpos = mat4.rotateY(mat4.create(), mat4.create(), (Math.PI)/15);
     switch (event.key) {
@@ -140,7 +139,7 @@ function drawScene() {
     globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
 
     if (typeof obj !== 'undefined') {
-        var yPos = 0;
+        let yPos = 0;
             mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
             mat4.multiply(tmpMat, horseCF, tmpMat);   // tmp = horseCF * tmpMat
             obj.draw(posAttr, colAttr, modelUnif, tmpMat);
@@ -150,7 +149,7 @@ function drawScene() {
 function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
-    gl.uniformMatrix4fv(viewUnif, false, viewMat)
+    gl.uniformMatrix4fv(viewUnif, false, viewMat);
     gl.viewport(0, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
 }
