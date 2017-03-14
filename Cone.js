@@ -1,101 +1,104 @@
 /**
  * Created by Hans Dulimarta on 2/1/17.
  */
-class Cube {
+class Cone {
     /**
-     * Create a cube
+     * Create a 3D cone with tip at the Z+ axis and base on the XY plane
      * @param {Object} gl      the current WebGL context
-     * @param {Number} size  size of the cube
-     * @param {Number} subDiv number of subdivisions
+     * @param {Number} radius  radius of the cone base
+     * @param {Number} height  height of the cone
+     * @param {Number} radialDiv  number of radial subdivision of the cone base
      * @param {vec3}   [col1]    color #1 to use
      * @param {vec3}   [col2]    color #2 to use
      */
-    constructor (gl, size, subDiv, col1, col2, col3) {
+    constructor (gl, RADIUS, HEIGHT, radialDiv, verticalDiv, col1, col2) {
 
         /* if colors are undefined, generate random colors */
         if (typeof col1 === "undefined") col1 = vec3.fromValues(0x5D/255, 0x31/255, 0x21/255);
         if (typeof col2 === "undefined") col2 = vec3.fromValues(0xF6/255, 0xD4/255, 0xA1/255);
-
         //if (typeof col1 === "undefined") col1 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         //if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
-        if (typeof col3 === "undefined") col3 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         let randColor = vec3.create();
-
-        this.vex = [
-            vec3.fromValues(-size / 2, -size / 2, +size / 2),  // 0
-            vec3.fromValues(+size / 2, -size / 2, +size / 2),  // 1
-            vec3.fromValues(+size / 2, +size / 2, +size / 2),  // 2
-            vec3.fromValues(-size / 2, +size / 2, +size / 2),  // 3
-            vec3.fromValues(-size / 2, -size / 2, -size / 2),  // 4
-            vec3.fromValues(+size / 2, -size / 2, -size / 2),  // 5
-            vec3.fromValues(+size / 2, +size / 2, -size / 2),  // 6
-            vec3.fromValues(-size / 2, +size / 2, -size / 2)   // 7
-        ];
-        this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
-
-        this.index = [];
-
-        this.split (subDiv, 0, 1, 2, 3, col1); /* top: Z+ */
-        this.split (subDiv, 0, 4, 5, 1, col2); /* front: Y- */
-        this.split (subDiv, 4, 7, 6, 5, col1); /* bottom: Z- */
-        this.split (subDiv, 2, 6, 7, 3, col2); /* back: Y+ */
-        this.split (subDiv, 1, 5, 6, 2, col3); /* right: X+ */
-        this.split (subDiv, 0, 3, 7, 4, col3); /* left: X- */
         let vertices = [];
-        for (let k = 0; k < this.vex.length; k++)
-        {
-            vertices.push(this.vex[k][0], this.vex[k][1], this.vex[k][2]);
-            vertices.push(this.color[k][0], this.color[k][1], this.color[k][2]);
-            // vec3.lerp (randColor, col1, col2, Math.random()); /* linear interpolation between two colors */
-            // vertices.push(randColor[0], randColor[1], randColor[2]);
+        /* Instead of allocating two separate JS arrays (one for position and one for color),
+         in the following loop we pack both position and color
+         so each tuple (x,y,z,r,g,b) describes the properties of a vertex
+         */
+        /*
+         Stack  |  Elevations     | Radii
+         ---------+-----------------+---------
+         1    |    0, H         |   R, 0
+         2    |    0, H/2, H    |   R, R/2, 0
+         3    | 0, H/3, 2H/3, H | R, 2R/3, R/3, 0
+         */
+        for (let s = 0; s < verticalDiv; s++) {
+            let h = s * HEIGHT / verticalDiv;
+            let r = (verticalDiv - s) * RADIUS / verticalDiv;
+            for (let k = 0; k < radialDiv; k++) {
+                let angle = k * 2 * Math.PI / radialDiv;
+                let x = r * Math.cos(angle);
+                let y = r * Math.sin(angle);
+
+                /* the first three floats are 3D (x,y,z) position */
+                vertices.push(x, y, h);
+                vec3.lerp(randColor, col1, col2, Math.random());
+                /* linear interpolation between two colors */
+                /* the next three floats are RGB */
+                vertices.push(randColor[0], randColor[1], randColor[2]);
+            }
         }
+        vertices.push(0,0,HEIGHT); /* tip of cone */
+        vec3.lerp (randColor, col1, col2, Math.random()); /* linear interpolation between two colors */
+        vertices.push(randColor[0], randColor[1], randColor[2]);
+        vertices.push (0,0,0); /* center of base */
+        vec3.lerp (randColor, col1, col2, Math.random()); /* linear interpolation between two colors */
+        vertices.push(randColor[0], randColor[1], randColor[2]);
+
+        /* copy the (x,y,z,r,g,b) sixtuplet into GPU buffer */
         this.vbuff = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
 
-        let ibuff = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuff);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(this.index), gl.STATIC_DRAW)
-        this.indices = [{primitive: gl.TRIANGLES, buffer: ibuff, numPoints: this.index.length}];
-    }
-
-    split (N, a, b, c, d, col) {
-        if (N > 0) {
-            let mid_ab = vec3.lerp(vec3.create(), this.vex[a], this.vex[b], 0.5);
-            this.vex.push(mid_ab);
-            this.color.push(col);
-            let n_ab = this.vex.length - 1;
-
-            let mid_bc = vec3.lerp(vec3.create(), this.vex[b], this.vex[c], 0.5);
-            this.vex.push(mid_bc);
-            this.color.push(col);
-            let n_bc = this.vex.length - 1;
-
-            let mid_cd = vec3.lerp(vec3.create(), this.vex[c], this.vex[d], 0.5);
-            this.vex.push(mid_cd);
-            this.color.push(col);
-            let n_cd = this.vex.length - 1;
-
-            let mid_da = vec3.lerp(vec3.create(), this.vex[d], this.vex[a], 0.5);
-            this.vex.push(mid_da);
-            this.color.push(col);
-            let n_da = this.vex.length - 1;
-
-            let ctr = vec3.lerp(vec3.create(), this.vex[n_ab], this.vex[n_cd], 0.5);
-            this.vex.push(ctr);
-            this.color.push(col);
-            let n_ctr = this.vex.length - 1;
-
-            this.split (N - 1, a, n_ab, n_ctr, n_da, col);
-            this.split (N - 1, n_da, n_ctr, n_cd, d, col);
-            this.split (N - 1, n_ab, b, n_bc, n_ctr, col);
-            this.split (N - 1, n_ctr, n_bc, c, n_cd, col);
-        } else {
-            /* stop recursion */
-            this.index.push(a, b, c);
-            this.index.push(a, c, d);
+        this.indices = [];
+        // this.buff = [];
+        var index;
+        for (let s = 0; s < verticalDiv - 1; s++) {
+            index = [];
+            let start = s * radialDiv;
+            for (let k = 0; k < radialDiv; k++) {
+                index.push(start + k + radialDiv, start + k);
+            }
+            index.push(start + radialDiv, start);
+            let buff = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buff);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(index), gl.STATIC_DRAW);
+            this.indices.push({primitive: gl.TRIANGLE_STRIP, buffer: buff, numPoints: index.length});
         }
+
+        // Generate index for the topmost stack
+        index = [];
+        index.push(verticalDiv * radialDiv);
+        let start = (verticalDiv - 1) * radialDiv;
+        for (let k = 0; k < radialDiv; k++)
+            index.push(start + k);
+        index.push(start);
+        let topBuff = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, topBuff);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(index), gl.STATIC_DRAW);
+        this.indices.push({primitive: gl.TRIANGLE_FAN, buffer: topBuff, numPoints: radialDiv + 2});
+
+        // Generate index for the bottom circle
+        index = [];
+        index.push(verticalDiv * radialDiv + 1);
+        for (let k = radialDiv - 1; k >= 0; k--)
+            index.push(k);
+        index.push(radialDiv - 1);
+        let botBuff = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, botBuff);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(index), gl.STATIC_DRAW);
+        this.indices.push({primitive: gl.TRIANGLE_FAN, buffer: botBuff, numPoints: radialDiv + 2});
     }
+
     /**
      * Draw the object
      * @param {Number} vertexAttr a handle to a vec3 attribute in the vertex shader for vertex xyz-position
