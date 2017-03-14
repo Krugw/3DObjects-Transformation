@@ -14,10 +14,8 @@ class Cone {
     constructor (gl, RADIUS, HEIGHT, radialDiv, verticalDiv, col1, col2) {
 
         /* if colors are undefined, generate random colors */
-        if (typeof col1 === "undefined") col1 = vec3.fromValues(0x5D/255, 0x31/255, 0x21/255);
-        if (typeof col2 === "undefined") col2 = vec3.fromValues(0xF6/255, 0xD4/255, 0xA1/255);
-        //if (typeof col1 === "undefined") col1 = vec3.fromValues(Math.random(), Math.random(), Math.random());
-        //if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
+        if (typeof col1 === "undefined") col1 = vec3.fromValues(Math.random(), Math.random(), Math.random());
+        if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         let randColor = vec3.create();
         let vertices = [];
         /* Instead of allocating two separate JS arrays (one for position and one for color),

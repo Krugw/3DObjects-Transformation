@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF;
+var orthoProjMat, persProjMat, viewMat, topViewMat, ArmorCF, pictureCF;
 var axisBuff, tmpMat;
 var globalAxes;
 
@@ -16,14 +16,14 @@ var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
 var coneSpinAngle;
-var obj;
+var knight, picture;
 var shaderProg;
 
 function main() {
     glCanvas = document.getElementById("gl-canvas");
     textOut = document.getElementById("msg");
     gl = WebGLUtils.setupWebGL(glCanvas, null);
-    axisBuff = gl.createBuffer()
+    axisBuff = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, axisBuff);
     window.addEventListener("resize", resizeHandler, false);
     window.addEventListener("keypress", keyboardHandler, false);
@@ -46,7 +46,8 @@ function main() {
             persProjMat = mat4.create();
             viewMat = mat4.create();
             topViewMat = mat4.create();
-            ringCF = mat4.create();
+            ArmorCF = mat4.create();
+            pictureCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
                 vec3.fromValues(2, 2, 2), /* eye */
@@ -57,11 +58,9 @@ function main() {
                 vec3.fromValues(0,0,0),
                 vec3.fromValues(0,1,0)
             );
-            gl.uniformMatrix4fv(modelUnif, false, ringCF);
-
-            obj = new DiamondRing(gl);
+            gl.uniformMatrix4fv(modelUnif, false, pictureCF);
+            picture = new Picture(gl);
             globalAxes = new Axes(gl);
-            //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
             coneSpinAngle = 0;
             resizeHandler();
             render();
@@ -83,39 +82,46 @@ function resizeHandler() {
     } else {
         alert ("Window is too narrow!");
     }
-
 }
 
 function keyboardHandler(event) {
-    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 1, 0, 0));
-    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-1, 0, 0));
-    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 1, 0));
-    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-1, 0));
-    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, 1));
-    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-1));
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .2, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.2, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, .2, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.2, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .2));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.2));
+    const rotZpos = mat4.rotateZ(mat4.create(), mat4.create(), (Math.PI)/15);
+    const rotYpos = mat4.rotateY(mat4.create(), mat4.create(), (Math.PI)/15);
     switch (event.key) {
         case "x":
-            mat4.multiply(ringCF, transXneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transXneg, pictureCF);  // pictureCF = Trans * pictureCF
             break;
         case "X":
-            mat4.multiply(ringCF, transXpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transXpos, pictureCF);  // pictureCF = Trans * pictureCF
             break;
         case "y":
-            mat4.multiply(ringCF, transYneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transYneg, pictureCF);  // pictureCF = Trans * pictureCF
             break;
         case "Y":
-            mat4.multiply(ringCF, transYpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transYpos, pictureCF);  // pictureCF = Trans * pictureCF
             break;
         case "z":
-            mat4.multiply(ringCF, transZneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transZneg, pictureCF);  // pictureCF = Trans * pictureCF
             break;
         case "Z":
-            mat4.multiply(ringCF, transZpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(pictureCF, transZpos, pictureCF);  // pictureCF = Trans * pictureCF
+            break;
+        case "R":
+            mat4.multiply(pictureCF, pictureCF, rotZpos);    // pictureCF = pictureCF * Trans
+            break;
+        case "r":
+            mat4.multiply(pictureCF, pictureCF, rotYpos);    // pictureCF = pictureCF * Trans
             break;
     }
-    textOut.innerHTML = "Ring origin (" + ringCF[12].toFixed(1) + ", "
-        + ringCF[13].toFixed(1) + ", "
-        + ringCF[14].toFixed(1) + ")";
+    textOut.innerHTML = "picture origin (" + pictureCF[12].toFixed(1) + ", "
+        + pictureCF[13].toFixed(1) + ", "
+        + pictureCF[14].toFixed(1) + ")";
 }
 
 function render() {
@@ -123,27 +129,36 @@ function render() {
     draw3D();
     drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
     // coneSpinAngle += 1;  /* add 1 degree */
+    coneSpinAngle += 1;
     requestAnimationFrame(render);
 }
 
 function drawScene() {
-    globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
+    //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
 
-    if (typeof obj !== 'undefined') {
-        var yPos = -0.5;
-        for (let k = 0; k < 3; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-            mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
-            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            yPos += 0.5;
-        }
+    // if (typeof knight !== 'undefined') {
+    //     let yPos = .5;
+    //         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+    //         //mat4.multiply(tmpMat, ArmorCF, tmpMat);   // tmp = ArmorCF * tmpMat
+    //         //let knightRot = mat4.fromZRotation(mat4.create(), coneSpinAngle * Math.PI/180.0);
+    //         //let tmp = mat4.create();
+    //         //mat4.multiply (tmp, ArmorCF, knightRot);   // tmp = coneCF * coneRot
+    //         knight.draw(posAttr, colAttr, modelUnif, tmpMat);
+    // }
+    if (typeof picture !== 'undefined') {
+            //mat4.fromTranslation(tmpMat, vec3.fromValues(-.5, .5, 0));
+            //mat4.multiply(tmpMat, ArmorCF, tmpMat);   // tmp = ArmorCF * tmpMat
+            let pictureRot = mat4.fromZRotation(mat4.create(), coneSpinAngle * Math.PI/180.0);
+            let tmp = mat4.create();
+            mat4.multiply (tmp, pictureCF, pictureRot);   // tmp = coneCF * coneRot
+            picture.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
 
 function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
-    gl.uniformMatrix4fv(viewUnif, false, viewMat)
+    gl.uniformMatrix4fv(viewUnif, false, viewMat);
     gl.viewport(0, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
 }
