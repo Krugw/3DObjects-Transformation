@@ -140,9 +140,9 @@ function drawScene() {
 
     if (typeof obj !== 'undefined') {
         let yPos = 0;
-        mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-        mat4.multiply(tmpMat, horseCF, tmpMat);   // tmp = horseCF * tmpMat
-        obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+            mat4.multiply(tmpMat, horseCF, tmpMat);   // tmp = horseCF * tmpMat
+            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
 
@@ -161,3 +161,4 @@ function drawTopView() {
     gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
 }
+
