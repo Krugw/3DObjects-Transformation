@@ -3,7 +3,7 @@
  */
 let gl;
 let glCanvas, textOut;
-let orthoProjMat, persProjMat, viewMat, topViewMat, horseCF;
+let orthoProjMat, persProjMat, viewMat, topViewMat, mainCF, maceCF;
 let axisBuff, tmpMat;
 let globalAxes;
 
@@ -15,7 +15,7 @@ let projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
 let coneSpinAngle;
-let obj;
+let knight, horse, mace;
 let shaderProg;
 
 function main() {
@@ -45,7 +45,7 @@ function main() {
             persProjMat = mat4.create();
             viewMat = mat4.create();
             topViewMat = mat4.create();
-            horseCF = mat4.create();
+            mainCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
                 vec3.fromValues(2, 2, 2), /* eye */
@@ -56,13 +56,16 @@ function main() {
                 vec3.fromValues(0,0,0),
                 vec3.fromValues(0,1,0)
             );
-            gl.uniformMatrix4fv(modelUnif, false, horseCF);
+            gl.uniformMatrix4fv(modelUnif, false, mainCF);
 
-            //obj = new DiamondRing(gl);
-            obj = new Horse(gl);
+
+            //Create Objects
+            horse = new Horse(gl);
+            mace = new Mace(gl);
+            knight = new Knight(gl);
             globalAxes = new Axes(gl);
-            //mat4.rotateX(horseCF, horseCF, -Math.PI/2);
-            coneSpinAngle = 0;
+            //mat4.rotateX(mainCF, mainCF, -Math.PI/2);
+            //coneSpinAngle = 0;
             resizeHandler();
             render();
         });
@@ -97,34 +100,34 @@ function keyboardHandler(event) {
     const rotYpos = mat4.rotateY(mat4.create(), mat4.create(), (Math.PI)/15);
     switch (event.key) {
         case "x":
-            mat4.multiply(horseCF, transXneg, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transXneg, mainCF);  // mainCF = Trans * mainCF
             break;
         case "X":
-            mat4.multiply(horseCF, transXpos, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transXpos, mainCF);  // mainCF = Trans * mainCF
             break;
         case "y":
-            mat4.multiply(horseCF, transYneg, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transYneg, mainCF);  // mainCF = Trans * mainCF
             break;
         case "Y":
-            mat4.multiply(horseCF, transYpos, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transYpos, mainCF);  // mainCF = Trans * mainCF
             break;
         case "z":
-            mat4.multiply(horseCF, transZneg, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transZneg, mainCF);  // mainCF = Trans * mainCF
             break;
         case "Z":
-            mat4.multiply(horseCF, transZpos, horseCF);  // horseCF = Trans * horseCF
+            mat4.multiply(mainCF, transZpos, mainCF);  // mainCF = Trans * mainCF
             break;
         case "R":
-            mat4.multiply(horseCF, horseCF, rotZpos);    // horseCF = horseCF * Trans
+            mat4.multiply(mainCF, mainCF, rotZpos);    // mainCF = mainCF * Trans
             break;
         case "r":
-            mat4.multiply(horseCF, horseCF, rotYpos);    // horseCF = horseCF * Trans
+            mat4.multiply(mainCF, mainCF, rotYpos);    // mainCF = mainCF * Trans
             break;
 
     }
-    textOut.innerHTML = "Ring origin (" + horseCF[12].toFixed(1) + ", "
-        + horseCF[13].toFixed(1) + ", "
-        + horseCF[14].toFixed(1) + ")";
+    textOut.innerHTML = "Ring origin (" + mainCF[12].toFixed(1) + ", "
+        + mainCF[13].toFixed(1) + ", "
+        + mainCF[14].toFixed(1) + ")";
 }
 
 function render() {
@@ -136,13 +139,31 @@ function render() {
 }
 
 function drawScene() {
-    globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
+    //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
 
-    if (typeof obj !== 'undefined') {
+    /*if (typeof horse !== 'undefined') {
         let yPos = 0;
             mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-            mat4.multiply(tmpMat, horseCF, tmpMat);   // tmp = horseCF * tmpMat
-            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+            mat4.multiply(tmpMat, mainCF, tmpMat);   // tmp = mainCF * tmpMat
+            horse.draw(posAttr, colAttr, modelUnif, tmpMat);
+    }*/
+
+    if (typeof horse !== 'undefined') {
+        mat4.fromTranslation(tmpMat, vec3.fromValues(0, 1, 0));
+        mat4.multiply(tmpMat, mainCF, tmpMat);   // tmp = mainCF * tmpMat
+        horse.draw(posAttr, colAttr, modelUnif, tmpMat);
+    }
+
+    if (typeof mace !== 'undefined') {
+        mat4.fromTranslation(tmpMat, vec3.fromValues(2, 0, 0));
+        mat4.multiply(tmpMat, mainCF, tmpMat);   // tmp = mainCF * tmpMat
+        mace.draw(posAttr, colAttr, modelUnif, tmpMat);
+    }
+
+    if (typeof knight !== 'undefined') {
+        mat4.fromTranslation(tmpMat, vec3.fromValues(0, -3, 0));
+        mat4.multiply(tmpMat, mainCF, tmpMat);   // tmp = mainCF * tmpMat
+        knight.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
 
@@ -161,4 +182,3 @@ function drawTopView() {
     gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
 }
-
